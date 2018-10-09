@@ -1,0 +1,25 @@
+Create database movie_finderdb;
+use movie_finderdb;
+
+
+create table tblmovie (
+movie_id int auto_increment primary key,
+title varchar(255) UNIQUE,
+director varchar(100) not null,
+release_year int not null,
+price double not null);
+
+
+
+insert into tblmovie (title,director,release_year,price) values ('A Prairie Home Companion','Altman',2006,120.00);
+insert into tblmovie (title,director,release_year,price) values ('American Graffitti','Lucas',1973,180.99);
+insert into tblmovie (title,director,release_year,price) values ('Annie Hall','Allen',1977,120.90);
+insert into tblmovie (title,director,release_year,price) values ('Apocalypse Now','Coppola',1979,110.90);
+insert into tblmovie (title,director,release_year,price) values ('Citizen Kane','Welles',1941,115.00);
+insert into tblmovie (title,director,release_year,price) values ('Fantasia','Disney',1940,115.00);
+insert into tblmovie (title,director,release_year,price) values ('GoodFellas','Scorsese',1990,205.00);
+insert into tblmovie (title,director,release_year,price) values ('Notorious','Hitchcock',1946,195.00);
+insert into tblmovie (title,director,release_year,price) values ('Nashville','Altman',1975,230.00);
+insert into tblmovie (title,director,release_year,price) values ('Play It Again','Sam Allen',1972,210.00);
+insert into tblmovie (title,director,release_year,price) values ('Poltergeist','Spielberg',2012,290.00);
+insert into tblmovie (title,director,release_year,price) values ('Oh happy day','Disney',2014,150.00);
