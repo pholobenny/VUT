@@ -14,20 +14,22 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
- *
- * @author benny
+ * Movie data class runs all the database functionality 
+ * @author Pholo Benny (210124385)
  */
 public class MovieDA {
 
-    private static ArrayList<Movie> arMovie;
+    private static ArrayList<Movies> arMovies;
     private static Connection conn;
+    private static Statement st;
+    private static ResultSet rs;
 
     /**
      * Connecting to the database
      */
-    public void initialize() throws DataStorageException {
+    public static void initialize() throws DataStorageException {
         String url, username, password, sqlLine;
-        Movie movie;
+        Movies movie;
         try {
             Class.forName("com.mysql..jdbc.Driver");
             url = "jdbc:mysql://localhost/movie_finderdb";
@@ -35,11 +37,11 @@ public class MovieDA {
             password = "";
             conn = DriverManager.getConnection(url, username, password);
             sqlLine = "select * from tblmovie";
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sqlLine);
+            st = conn.createStatement();
+            rs = st.executeQuery(sqlLine);
             while (rs.next()) {
-                movie = new Movie(rs.getString("title"), rs.getString("director"), rs.getInt("release_year"), rs.getDouble("price"));
-                arMovie.add(movie);
+                movie = new Movies(rs.getString("title"), rs.getString("director"), rs.getInt("release_year"), rs.getDouble("price"));
+                arMovies.add(movie);
             }
 
         } catch (ClassNotFoundException ex) {
@@ -52,23 +54,11 @@ public class MovieDA {
     /**
      * Terminating connection established by initialize
      */
-    public void terminate() throws DataStorageException {
-
+    public static void terminate() throws DataStorageException {
         try {
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("select * from tblmovie");
-            for (int i = 0; i < arMovie.size(); i++) {
-                while (rs.next()) {
-                    if (rs.getString("title").equalsIgnoreCase(arMovie.get(i).getTitle())) {
-                        //CHECK IF ALL THE VALUS ARE THE SAME IF NOT UPDATE
-                        
-                        
-                        st.executeQuery("UPDATE FROM tblmovie SET where title = " + arMovie.get(0).getTitle() + "");
-                    }
-                }
+            if (!conn.isClosed()) {
+                conn.close();
             }
-
-            conn.close();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
@@ -79,8 +69,19 @@ public class MovieDA {
      *
      * @return all the movies in the database
      */
-    public ArrayList<Movie> getAll() {
-        return arMovie;  // just returning the shallow copy of the data
+    public static ArrayList<Movies> getAll() throws NotFoundException {
+        String sqlLine = "select * from tblmovie";
+        try {
+            st = conn.createStatement();
+            rs = st.executeQuery(sqlLine);
+            while (rs.next()) {
+                Movies movies = new Movies(rs.getString("title"), rs.getString("director"), rs.getInt("release_year"), rs.getDouble("price"));
+                arMovies.add(movies);
+            }
+        } catch (SQLException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+        return arMovies;
     }
 
     /**
@@ -89,14 +90,20 @@ public class MovieDA {
      * @param directorName the name of the director
      * @return list of movies that contains the director name
      */
-    public ArrayList<Movie> returnByDirector(String directorName) {
-        ArrayList<Movie> list = new ArrayList<>();
-        for (Movie m : arMovie) {
-            if (m.getDirector().matches("(?i)(" + directorName + ").*")) {
-                list.add(m);
+    public static ArrayList<Movies> returnByDirector(String directorName) throws NotFoundException {
+        String sqlLine = "Select * from tblmovie where director LIKE \'%\'" + directorName + "\'%\';";
+        try {
+            st = conn.createStatement();
+            rs = st.executeQuery(sqlLine);
+
+            while (rs.next()) {
+                Movies movies = new Movies(rs.getString("title"), rs.getString("director"), rs.getInt("release_year"), rs.getDouble("price"));
+                arMovies.add(movies);
             }
+        } catch (SQLException ex) {
+            throw new NotFoundException(ex.getMessage());
         }
-        return list;
+        return arMovies;
     }
 
     /**
@@ -105,14 +112,20 @@ public class MovieDA {
      * @param title the title of the movie
      * @return the list of movies that contains the title
      */
-    public ArrayList<Movie> returnByTitle(String title) {
-        ArrayList<Movie> list = new ArrayList<>();
-        for (Movie m : arMovie) {
-            if (m.getTitle().matches("(?i)(" + title + ").*")) {
-                list.add(m);
+    public static ArrayList<Movies> returnByTitle(String title) throws NotFoundException {
+        String sqlLine = "Select * from tblmovie where director LIKE \'%\'" + title + "\'%\';";
+        try {
+            st = conn.createStatement();
+            rs = st.executeQuery(sqlLine);
+
+            while (rs.next()) {
+                Movies movies = new Movies(rs.getString("title"), rs.getString("director"), rs.getInt("release_year"), rs.getDouble("price"));
+                arMovies.add(movies);
             }
+        } catch (SQLException ex) {
+            throw new NotFoundException(ex.getMessage());
         }
-        return list;
+        return arMovies;
     }
 
     /**
@@ -121,12 +134,23 @@ public class MovieDA {
      * @param year the year of the movie release
      * @return list of movie that where release after that year
      */
-    public ArrayList<Movie> producedAfter(int year) {
-        ArrayList<Movie> list = new ArrayList<>();
-        for (Movie m : arMovie) {
-            if (m.getRelease_year() > year) {
-                list.add(m);
+    public static ArrayList<Movies> producedAfter(int year) throws NotFoundException {
+        String sqlLine = "Select * from tblmovie;";
+        ArrayList<Movies> list = new ArrayList<>();
+        try {
+            st = conn.createStatement();
+            rs = st.executeQuery(sqlLine);
+            while (rs.next()) {
+                Movies movies = new Movies(rs.getString("title"), rs.getString("director"), rs.getInt("release_year"), rs.getDouble("price"));
+                arMovies.add(movies);
             }
+            for (Movies m : arMovies) {
+                if (m.getRelease_year() > year) {
+                    list.add(m);
+                }
+            }
+        } catch (SQLException ex) {
+            throw new NotFoundException(ex.getMessage());
         }
         return list;
     }
@@ -137,12 +161,23 @@ public class MovieDA {
      * @param year the year
      * @return list of movies that where released before that year
      */
-    public ArrayList<Movie> producedBefore(int year) {
-        ArrayList<Movie> list = new ArrayList<>();
-        for (Movie m : arMovie) {
-            if (m.getRelease_year() < year) {
-                list.add(m);
+    public static ArrayList<Movies> producedBefore(int year) throws NotFoundException {
+        String sqlLine = "Select * from tblmovie;";
+        ArrayList<Movies> list = new ArrayList<>();
+        try {
+            st = conn.createStatement();
+            rs = st.executeQuery(sqlLine);
+            while (rs.next()) {
+                Movies movies = new Movies(rs.getString("title"), rs.getString("director"), rs.getInt("release_year"), rs.getDouble("price"));
+                arMovies.add(movies);
             }
+            for (Movies m : arMovies) {
+                if (m.getRelease_year() < year) {
+                    list.add(m);
+                }
+            }
+        } catch (SQLException ex) {
+            throw new NotFoundException(ex.getMessage());
         }
         return list;
     }
@@ -153,17 +188,20 @@ public class MovieDA {
      *
      * @param percentage
      */
-    public void updatePrice(int percentage) {
-        for (int i = 0; i < arMovie.size(); i++) {
-            Movie temp = arMovie.get(i);
-            if (temp.getRelease_year() < 2000 && temp.getPrice() > 120.00) {
-                double prc, newPrice;
-                prc = arMovie.get(i).getPrice() * (percentage / 100);
-                newPrice = arMovie.get(i).getPrice() - prc;
-                arMovie.get(i).setPrice(newPrice);
+    public static void updatePrice(int percentage) throws NotFoundException {
+        String line = "Select * from tblmovie where realesed_year <2000 AND price >120;";
+        try {
+            st = conn.createStatement();
+            rs = st.executeQuery(line);
+            while (rs.next()) {                
+               double price = rs.getDouble("price")* (percentage/100);
+               double newPrice = rs.getDouble("price") - price;                
+                String sqlLine = "UPDATE tblmovie SET price="+newPrice+" WHERE title="+rs.getString("title");
+                st.executeUpdate(sqlLine);
             }
+        } catch (SQLException ex) {
+            throw new NotFoundException(ex.getMessage());
         }
-
     }
 
     /**
@@ -171,12 +209,15 @@ public class MovieDA {
      *
      * @param title the title of the movie
      */
-    public void deleteMovie(String title) {
-        for (Movie t : arMovie) {
-            if (t.getTitle().equalsIgnoreCase(title)) {
-                arMovie.remove(t);
-            }
+    public static void deleteMovie(String title) throws NotFoundException {
+        String sqlLine = "DELETE FROM tblmovie WHERE title=" + title + ";";
+        try {
+            st = conn.createStatement();
+            st.executeUpdate(sqlLine);
+        } catch (SQLException ex) {
+            throw new NotFoundException(ex.getMessage());
         }
+
     }
 
     /**
@@ -184,36 +225,51 @@ public class MovieDA {
      *
      * @return list of movie title
      */
-    public ArrayList<String> retrieveTitles() {
+    public static ArrayList<String> retrieveTitles() throws NotFoundException {
+        String sqlLine = "select title from tblmovie";
         ArrayList<String> list = new ArrayList<>();
-        for (Movie t : arMovie) {
-            list.add(t.getTitle());
+        try {
+            st = conn.createStatement();
+            rs = st.executeQuery(sqlLine);
+            while (rs.next()) {
+                list.add(rs.getString("title"));
+            }
+        } catch (SQLException ex) {
+            throw new NotFoundException(ex.getMessage());
         }
         return list;
     }
 
-    /**
-     * Add the new movie
-     *
-     * @param title the title of the movie
-     * @param directorName the director name for the movie
-     * @param release_year the release year of the movie
-     * @param price the price of the movie
-     */
-    public void addMovie(Movie movie) throws DuplicateExeption {
+   /**
+    * Add a new movie to the database
+    * @param movie the new movie
+    * @throws DuplicateExeption if the movie exist already
+    */
+    public static void addMovie(Movies movie) throws DuplicateExeption {
         boolean duplicate = false;
-        for (int i = 0; i < arMovie.size() && !duplicate; i++) {
-            Movie temp = arMovie.get(i);
-            if (temp.getTitle().equalsIgnoreCase(movie.getTitle())) {
-                duplicate = true;
+        // Get all the movies and validate if the movie is not stored in the database 
+        // adding a new movie
+        try {
+            getAll(); //this is to get all the movies in the database
+            for (int i = 0; i < arMovies.size() && !duplicate; i++) {
+                Movies temp = arMovies.get(i);
+                if (temp.getTitle().equalsIgnoreCase(movie.getTitle()) && temp.getDirector().equalsIgnoreCase(movie.getDirector())) {
+                    duplicate = true;
+                }
             }
+            // If the movie is not found add the movie
+            if (duplicate) {
+                throw new DuplicateExeption("Movie exists already");
+            } else {
+                String line = "INSERT INTO tblmovie VALUES(null,\'" + movie.getTitle() + "\',\'" + movie.getDirector()
+                        + "\'," + movie.getRelease_year() + "," + movie.getPrice() + ");";
+                st = conn.createStatement();
+                st.executeUpdate(line);
+            }
+        } catch (Exception ex) {
+            throw new DuplicateExeption(ex.getMessage());
         }
 
-        if (duplicate) {
-            throw new DuplicateExeption("Movie exists already");
-        } else {
-            arMovie.add(movie);
-        }
     }
 
 }

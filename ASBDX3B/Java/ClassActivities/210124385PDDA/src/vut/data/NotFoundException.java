@@ -7,7 +7,7 @@ package vut.data;
 
 /**
  *
- * @author benny
+ * @author Pholo Benny (210124385)
  */
 public class NotFoundException extends Exception {
 

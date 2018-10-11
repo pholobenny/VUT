@@ -7,23 +7,23 @@ package vut.data;
 
 /**
  *
- * @author benny
+ * @author Pholo Benny (210124385)
  */
-public class Movie {
+public class Movies {
     
     private String title;
     private String director;
     private int release_year;
     private double price;
     
-    public Movie(){
+    public Movies(){
         this.title="";
         this.director="";
         this.release_year=0;
         this.price = 0.0;
     }
     
-    public Movie(String title,String director, int release_year,double price){
+    public Movies(String title,String director, int release_year,double price){
         setTitle(title);
         setDirector(director);
         setReleaseYear(release_year);
@@ -99,7 +99,7 @@ public class Movie {
     }
 
     /**
-     * Movie details
+     * Movies details
      * @return the movie details
      */
     @Override
@@ -109,10 +109,47 @@ public class Movie {
     
    // invoking the DA methods 
     
+    public void initiallize() throws DataStorageException{
+        MovieDA.initialize();
+    }
     
+    public void terminate() throws DataStorageException{
+        MovieDA.terminate();
+    }
     
+    public void getAll() throws NotFoundException{
+        MovieDA.getAll();
+    }
     
+    public void returnByDirector(String director) throws NotFoundException{
+        MovieDA.returnByDirector(director);
+    }
     
+    public void returnByTitle(String title) throws NotFoundException{
+        MovieDA.returnByTitle(title);
+    }
     
+    public void producedAfter(int year) throws NotFoundException{
+        MovieDA.producedAfter(year);
+    }
     
+    public void producedBefore(int year)throws NotFoundException{
+        MovieDA.producedBefore(year);
+    }
+    
+    public void updatePrice(int pecentage) throws NotFoundException{
+        MovieDA.updatePrice(pecentage);
+    }
+    
+    public void deleteMovie (String title)throws NotFoundException{
+        MovieDA.deleteMovie(title);
+    }
+    
+    public void retrieveTitles() throws NotFoundException {
+        MovieDA.retrieveTitles();
+    }
+    
+    public void addMovie(Movies movie) throws DuplicateExeption{
+        MovieDA.addMovie(this);
+    }    
 }
