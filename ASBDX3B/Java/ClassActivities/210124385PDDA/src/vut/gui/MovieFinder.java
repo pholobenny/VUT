@@ -16,7 +16,7 @@ import vut.data.Movies;
 
 /**
  *
- * @author benny
+ * @author benny Pholo (210124385)
  */
 public class MovieFinder extends javax.swing.JFrame {
 
