@@ -5,6 +5,8 @@
  */
 package vut.data;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Pholo Benny (210124385)
@@ -121,20 +123,20 @@ public class Movies {
         MovieDA.getAll();
     }
     
-    public void returnByDirector(String director) throws NotFoundException{
-        MovieDA.returnByDirector(director);
+    public ArrayList<Movies> returnByDirector(String director) throws NotFoundException{
+        return MovieDA.returnByDirector(director);
     }
     
-    public void returnByTitle(String title) throws NotFoundException{
-        MovieDA.returnByTitle(title);
+    public ArrayList<Movies> returnByTitle(String title) throws NotFoundException{
+       return MovieDA.returnByTitle(title);
     }
     
-    public void producedAfter(int year) throws NotFoundException{
-        MovieDA.producedAfter(year);
+    public ArrayList<Movies> producedAfter(int year) throws NotFoundException{
+       return MovieDA.producedAfter(year);
     }
     
-    public void producedBefore(int year)throws NotFoundException{
-        MovieDA.producedBefore(year);
+    public ArrayList<Movies> producedBefore(int year)throws NotFoundException{
+       return MovieDA.producedBefore(year);
     }
     
     public void updatePrice(int pecentage) throws NotFoundException{
@@ -145,8 +147,8 @@ public class Movies {
         MovieDA.deleteMovie(title);
     }
     
-    public void retrieveTitles() throws NotFoundException {
-        MovieDA.retrieveTitles();
+    public ArrayList<String> retrieveTitles() throws NotFoundException {
+        return MovieDA.retrieveTitles();
     }
     
     public void addMovie(Movies movie) throws DuplicateExeption{

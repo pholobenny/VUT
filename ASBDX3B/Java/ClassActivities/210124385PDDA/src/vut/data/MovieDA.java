@@ -14,12 +14,13 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
- * Movie data class runs all the database functionality 
+ * Movie data class runs all the database functionality
+ *
  * @author Pholo Benny (210124385)
  */
 public class MovieDA {
 
-    private static ArrayList<Movies> arMovies;
+    private static ArrayList<Movies> arMovies = new ArrayList<>();
     private static Connection conn;
     private static Statement st;
     private static ResultSet rs;
@@ -31,7 +32,7 @@ public class MovieDA {
         String url, username, password, sqlLine;
         Movies movie;
         try {
-            Class.forName("com.mysql..jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
             url = "jdbc:mysql://localhost/movie_finderdb";
             username = "vut";
             password = "";
@@ -39,14 +40,11 @@ public class MovieDA {
             sqlLine = "select * from tblmovie";
             st = conn.createStatement();
             rs = st.executeQuery(sqlLine);
-            while (rs.next()) {
-                movie = new Movies(rs.getString("title"), rs.getString("director"), rs.getInt("release_year"), rs.getDouble("price"));
-                arMovies.add(movie);
-            }
-
         } catch (ClassNotFoundException ex) {
+            System.out.println("vut.data.MovieDA.initialize()" + ex.getMessage());
             JOptionPane.showMessageDialog(null, ex.getMessage());
         } catch (SQLException ex) {
+            System.out.println("vut.data.MovieDA.initialize()" + ex.getMessage());
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
@@ -91,7 +89,7 @@ public class MovieDA {
      * @return list of movies that contains the director name
      */
     public static ArrayList<Movies> returnByDirector(String directorName) throws NotFoundException {
-        String sqlLine = "Select * from tblmovie where director LIKE \'%\'" + directorName + "\'%\';";
+        String sqlLine = "Select * from tblmovie where director LIKE \'%" + directorName + "%\';";
         try {
             st = conn.createStatement();
             rs = st.executeQuery(sqlLine);
@@ -113,16 +111,17 @@ public class MovieDA {
      * @return the list of movies that contains the title
      */
     public static ArrayList<Movies> returnByTitle(String title) throws NotFoundException {
-        String sqlLine = "Select * from tblmovie where director LIKE \'%\'" + title + "\'%\';";
+        String sqlLine = "Select * from tblmovie where title LIKE \'%" + title + "%\';";
         try {
             st = conn.createStatement();
             rs = st.executeQuery(sqlLine);
-
             while (rs.next()) {
+
                 Movies movies = new Movies(rs.getString("title"), rs.getString("director"), rs.getInt("release_year"), rs.getDouble("price"));
                 arMovies.add(movies);
             }
         } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
             throw new NotFoundException(ex.getMessage());
         }
         return arMovies;
@@ -193,10 +192,10 @@ public class MovieDA {
         try {
             st = conn.createStatement();
             rs = st.executeQuery(line);
-            while (rs.next()) {                
-               double price = rs.getDouble("price")* (percentage/100);
-               double newPrice = rs.getDouble("price") - price;                
-                String sqlLine = "UPDATE tblmovie SET price="+newPrice+" WHERE title="+rs.getString("title");
+            while (rs.next()) {
+                double price = rs.getDouble("price") * (percentage / 100);
+                double newPrice = rs.getDouble("price") - price;
+                String sqlLine = "UPDATE tblmovie SET price=" + newPrice + " WHERE title=" + rs.getString("title");
                 st.executeUpdate(sqlLine);
             }
         } catch (SQLException ex) {
@@ -240,11 +239,12 @@ public class MovieDA {
         return list;
     }
 
-   /**
-    * Add a new movie to the database
-    * @param movie the new movie
-    * @throws DuplicateExeption if the movie exist already
-    */
+    /**
+     * Add a new movie to the database
+     *
+     * @param movie the new movie
+     * @throws DuplicateExeption if the movie exist already
+     */
     public static void addMovie(Movies movie) throws DuplicateExeption {
         boolean duplicate = false;
         // Get all the movies and validate if the movie is not stored in the database 
@@ -269,7 +269,10 @@ public class MovieDA {
         } catch (Exception ex) {
             throw new DuplicateExeption(ex.getMessage());
         }
+    }
 
+    public static double calculateAveragePrice() {
+        return 0;
     }
 
 }
