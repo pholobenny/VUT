@@ -5,11 +5,12 @@
  */
 package vut.frame;
 
+import javax.swing.ButtonGroup;
 import vut.data.BankAccount;
 
 /**
  *
- * @author benny
+ * @author Pholo Benny (210124385)
  */
 public class AccountTransactionWindow extends javax.swing.JFrame {
 
@@ -20,6 +21,14 @@ public class AccountTransactionWindow extends javax.swing.JFrame {
      */
     public AccountTransactionWindow() {
         initComponents();
+        groupButtons();
+    }
+    
+    public void groupButtons(){
+        buttonGroup1 = new ButtonGroup();
+        buttonGroup1.add(rdbCheck);
+        buttonGroup1.add(rdbSavings);
+        rdbCheck.setSelected(true);
     }
 
     /**

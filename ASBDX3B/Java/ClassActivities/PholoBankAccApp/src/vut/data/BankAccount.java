@@ -8,7 +8,7 @@ package vut.data;
 /**
  * This is the bank account class
  *
- * @author 210124385
+ * @author Pholo Benny 210124385
  */
 public class BankAccount {
 
